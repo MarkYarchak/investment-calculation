@@ -20,7 +20,7 @@
             v-model.number="iterationPercents"
             :rules="rules.iterationPercents"
             type="number"
-            label="Складний процент"
+            label="Дохідність (%)"
             suffix="%"
           />
           <v-text-field
