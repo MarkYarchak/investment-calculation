@@ -58,6 +58,9 @@
       >
         <v-list-item-subtitle>Ітерація {{ iteration.id }}</v-list-item-subtitle>
         <v-list-item-title>{{ iteration.price }}</v-list-item-title>
+        <template v-slot:append>
+          <v-list-item-action>{{ iteration.yieldPercents }}%</v-list-item-action>
+        </template>
       </v-list-item>
     </v-list>
   </v-container>
@@ -69,6 +72,7 @@ import { ref } from 'vue';
 interface CalculatedIteration {
   id: number;
   price: number;
+  yieldPercents: number|string;
 }
 
 const initialValue = ref(1);
@@ -114,18 +118,26 @@ function formatIterations() {
 
 function formatOneIteration(id: number, prevIteration: CalculatedIteration|null) {
   if (!prevIteration) {
-    return { id, price: formatPrice(initialValue.value) };
+    return {
+      id,
+      price: formatPrice(initialValue.value),
+      yieldPercents: 100,
+    };
   }
 
-  const price = prevIteration.price + ((prevIteration.price * iterationPercents.value) / 100);
+  const priceValue = prevIteration.price + ((prevIteration.price * iterationPercents.value) / 100);
+  const price = formatPrice(priceValue, additionalIterationPrice.value);
+  const yieldPercents = Math.round((price / initialValue.value) * 10_000) / 100;
 
   return {
     id,
-    price: formatPrice(price, additionalIterationPrice.value),
+    price,
+    yieldPercents,
   };
 }
 
 function formatPrice(value: number, additionalPrice = null) {
-  return additionalPrice ? value + additionalPrice : value;
+  const price = additionalPrice ? value + additionalPrice : value;
+  return Math.round(price * 1_000_000) / 1_000_000;
 }
 </script>
