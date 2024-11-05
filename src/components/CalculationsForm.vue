@@ -53,10 +53,16 @@
       </v-form>
     </v-card>
 
+    <v-checkbox
+      v-model="showIterationRevenue"
+      label="Показувати прибуток між ітераціями"
+      class="mt-5"
+    />
+
     <v-list
       v-if="calculatedIterations.length"
+      :lines="showIterationRevenue ? 'two' : undefined"
       border
-      class="mt-5"
     >
       <v-list-item
         v-for="iteration of calculatedIterations"
@@ -66,11 +72,22 @@
       >
         <v-list-item-subtitle>Ітерація {{ iteration.id }}</v-list-item-subtitle>
         <v-list-item-title>{{ iteration.price }}</v-list-item-title>
-        <template
-          v-if="iteration.yieldPercents"
-          v-slot:append
-        >
-          <v-list-item-action>{{ iteration.yieldPercents }}%</v-list-item-action>
+
+        <template v-slot:append>
+          <div>
+            <v-list-item-action
+              v-if="iteration.yieldPercents"
+              class="text-right"
+            >
+              {{ iteration.yieldPercents }}%
+            </v-list-item-action>
+            <div
+              v-if="showIterationRevenue && iteration.revenue"
+              class="text-green text-right"
+            >
+              +{{ iteration.revenue }}
+            </div>
+          </div>
         </template>
       </v-list-item>
     </v-list>
@@ -84,6 +101,7 @@ import { validationRules as rules } from '@/helpers/validation';
 interface CalculatedIteration {
   id: number;
   price: number;
+  revenue?: number;
   yieldPercents: number|string;
 }
 
@@ -91,6 +109,7 @@ const initialPrice = ref(1);
 const iterations = ref(1);
 const iterationPercents = ref(10);
 const additionalIterationPrice = ref(0);
+const showIterationRevenue = ref(false);
 
 const calculatedIterations = ref<CalculatedIteration[]>([]);
 
@@ -124,11 +143,13 @@ function formatOneIteration(id: number, prevIteration: CalculatedIteration|null)
   const revenueByPercent = (prevIteration.price * iterationPercents.value) / 100;
   const priceWithPercent = prevIteration.price + revenueByPercent;
   const price = formatPrice(priceWithPercent, additionalIterationPrice.value);
+  const revenue = revenueByPercent + additionalIterationPrice.value;
   const yieldPercents = initialValue ? Math.round((price / initialValue) * 10_000) / 100 : null;
 
   return {
     id,
     price,
+    revenue,
     yieldPercents,
   };
 }
