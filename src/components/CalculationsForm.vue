@@ -101,10 +101,10 @@ const rules = {
 const calculatedIterations = ref<CalculatedIteration[]>([]);
 
 function onSubmit() {
-  formatIterations();
+  calculatedIterations.value = getFormattedIterations();
 }
 
-function formatIterations() {
+function getFormattedIterations() {
   const formattedIterations: CalculatedIteration[] = [];
 
   for (let i = 0; i <= iterations.value; i += 1) {
@@ -113,7 +113,7 @@ function formatIterations() {
     formattedIterations.push(calculatedIteration);
   }
 
-  calculatedIterations.value = formattedIterations;
+  return formattedIterations;
 }
 
 function formatOneIteration(id: number, prevIteration: CalculatedIteration|null) {
