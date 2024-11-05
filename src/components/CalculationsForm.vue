@@ -106,7 +106,7 @@ interface CalculatedIteration {
 }
 
 const initialPrice = ref(1);
-const iterations = ref(1);
+const iterations = ref(12);
 const iterationPercents = ref(10);
 const additionalIterationPrice = ref(0);
 const showIterationRevenue = ref(false);
