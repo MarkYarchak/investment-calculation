@@ -77,7 +77,7 @@
           <div>
             <v-list-item-action
               v-if="iteration.yieldPercents"
-              class="text-right"
+              class="justify-end"
             >
               {{ iteration.yieldPercents }}%
             </v-list-item-action>
@@ -143,7 +143,7 @@ function formatOneIteration(id: number, prevIteration: CalculatedIteration|null)
   const revenueByPercent = (prevIteration.price * iterationPercents.value) / 100;
   const priceWithPercent = prevIteration.price + revenueByPercent;
   const price = formatPrice(priceWithPercent, additionalIterationPrice.value);
-  const revenue = revenueByPercent + additionalIterationPrice.value;
+  const revenue = formatPrice(revenueByPercent + additionalIterationPrice.value);
   const yieldPercents = initialValue ? Math.round((price / initialValue) * 10_000) / 100 : null;
 
   return {
@@ -154,7 +154,7 @@ function formatOneIteration(id: number, prevIteration: CalculatedIteration|null)
   };
 }
 
-function formatPrice(value: number, additionalPrice = null) {
+function formatPrice(value: number, additionalPrice = 0) {
   const price = additionalPrice ? value + additionalPrice : value;
   return Math.round(price * 1_000_000) / 1_000_000;
 }
