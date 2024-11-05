@@ -17,5 +17,6 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'import/extensions': 'off',
     'no-use-before-define': 'off',
+    'import/prefer-default-export': 'off',
   },
 };

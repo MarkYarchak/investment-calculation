@@ -68,6 +68,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { validationRules as rules } from '@/helpers/validation';
 
 interface CalculatedIteration {
   id: number;
@@ -75,28 +76,10 @@ interface CalculatedIteration {
   yieldPercents: number|string;
 }
 
-const initialValue = ref(1);
+const initialValue = ref(0);
 const iterations = ref(1);
 const iterationPercents = ref(10);
-const additionalIterationPrice = ref(null);
-
-const rules = {
-  initialValue: [
-    (v: number|undefined) => typeof v === 'number' || 'Обов\'язкове поле',
-    (v: number) => (v > 0) || 'Мінімальне значення: 1',
-  ],
-  iterations: [
-    (v: number|undefined) => typeof v === 'number' || 'Обов\'язкове поле',
-    (v: number) => (v > 0 && v <= 10_000) || 'Дозволена кількість ітерацій від 1 до 10,000',
-  ],
-  iterationPercents: [
-    (v: number|undefined) => typeof v === 'number' || 'Обов\'язкове поле',
-    (v: number) => (v > 0 && v <= 10_000) || 'Процент повинен бути в межах від 1 до 10,000',
-  ],
-  additionalIterationPrice: [
-    (v: number) => (v >= 0) || 'Мінімальне значення додаткового вкладення: 0',
-  ],
-};
+const additionalIterationPrice = ref(0);
 
 const calculatedIterations = ref<CalculatedIteration[]>([]);
 
