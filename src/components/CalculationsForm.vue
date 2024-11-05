@@ -4,9 +4,17 @@
       <v-form @submit.prevent="onSubmit">
         <v-card-title>Розрахунок вкладення</v-card-title>
         <v-card-text>
+          <v-alert
+            v-if="initialPrice < 1"
+            type="warning"
+            class="mb-3"
+          >
+            Неможливо вирахувати дохідність в % без початкової суми
+          </v-alert>
+
           <v-text-field
-            v-model.number="initialValue"
-            :rules="rules.initialValue"
+            v-model.number="initialPrice"
+            :rules="rules.initialPrice"
             type="number"
             label="Початкова сума"
           />
@@ -58,7 +66,10 @@
       >
         <v-list-item-subtitle>Ітерація {{ iteration.id }}</v-list-item-subtitle>
         <v-list-item-title>{{ iteration.price }}</v-list-item-title>
-        <template v-slot:append>
+        <template
+          v-if="iteration.yieldPercents"
+          v-slot:append
+        >
           <v-list-item-action>{{ iteration.yieldPercents }}%</v-list-item-action>
         </template>
       </v-list-item>
@@ -76,7 +87,7 @@ interface CalculatedIteration {
   yieldPercents: number|string;
 }
 
-const initialValue = ref(0);
+const initialPrice = ref(1);
 const iterations = ref(1);
 const iterationPercents = ref(10);
 const additionalIterationPrice = ref(0);
@@ -100,17 +111,20 @@ function getFormattedIterations() {
 }
 
 function formatOneIteration(id: number, prevIteration: CalculatedIteration|null) {
+  const initialValue = initialPrice.value;
+
   if (!prevIteration) {
     return {
       id,
-      price: formatPrice(initialValue.value),
-      yieldPercents: 100,
+      price: formatPrice(initialValue),
+      yieldPercents: initialValue ? 100 : null,
     };
   }
 
-  const priceValue = prevIteration.price + ((prevIteration.price * iterationPercents.value) / 100);
-  const price = formatPrice(priceValue, additionalIterationPrice.value);
-  const yieldPercents = Math.round((price / initialValue.value) * 10_000) / 100;
+  const revenueByPercent = (prevIteration.price * iterationPercents.value) / 100;
+  const priceWithPercent = prevIteration.price + revenueByPercent;
+  const price = formatPrice(priceWithPercent, additionalIterationPrice.value);
+  const yieldPercents = initialValue ? Math.round((price / initialValue) * 10_000) / 100 : null;
 
   return {
     id,

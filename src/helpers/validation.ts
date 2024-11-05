@@ -8,7 +8,7 @@ const MAX_PERCENT = 10_000;
 const MIN_ADDITIONAL_PRICE = 0;
 
 export const validationRules = {
-  initialValue: [
+  initialPrice: [
     (v: number|undefined) => typeof v === 'number' || 'Обов\'язкове поле',
     (v: number) => (v >= MIN_INITIAL_VALUE) || `Мінімальне значення: ${MIN_INITIAL_VALUE}`,
   ],
